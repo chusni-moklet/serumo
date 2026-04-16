@@ -2,25 +2,35 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #0f172a;
+  /* Telkom Red */
+  --telkom-red: #E40521;
+  --telkom-red-dark: #B8001A;
+  --telkom-red-light: #FF1A35;
+  /* BUMN Blue */
+  --bumn-blue: #003087;
+  --bumn-blue-dark: #001F5C;
+  --bumn-blue-light: #0047C8;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+/* Telkom gradient utilities */
+.telkom-gradient {
+  background: linear-gradient(135deg, #E40521 0%, #B8001A 40%, #003087 100%);
+}
+.telkom-gradient-r {
+  background: linear-gradient(135deg, #003087 0%, #0047C8 50%, #E40521 100%);
+}
+.telkom-text-gradient {
+  background: linear-gradient(135deg, #E40521, #003087);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Serumo — Sewa Ruangan Moklet
 
-## Getting Started
+Sistem penyewaan ruangan SMK Telkom Malang dengan virtual tour, booking real-time, dan dashboard admin.
 
-First, run the development server:
+## Tech Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Frontend**: Next.js 16 (App Router) + TypeScript
+- **Styling**: Tailwind CSS v4 + Radix UI
+- **Backend**: Supabase (Auth + PostgreSQL + Storage)
+
+## Setup
+
+### 1. Supabase Project
+
+1. Buat project baru di [supabase.com](https://supabase.com)
+2. Jalankan SQL di `supabase/schema.sql` melalui **SQL Editor**
+3. Buat Storage bucket bernama `payment-proofs` (set ke **Public**)
+
+### 2. Environment Variables
+
+Edit `.env.local`:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ambil dari: Supabase Dashboard → Settings → API
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Buat Admin User
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Daftar akun biasa via `/auth/register`
+2. Di Supabase SQL Editor, jalankan:
 
-## Learn More
+```sql
+UPDATE public.users SET role = 'admin' WHERE email = 'admin@email.com';
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Jalankan Dev Server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+npm install
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Buka [http://localhost:3000](http://localhost:3000)
 
-## Deploy on Vercel
+## Struktur Halaman
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Route | Deskripsi |
+|-------|-----------|
+| `/` | Homepage |
+| `/rooms` | Katalog ruangan |
+| `/rooms/[id]` | Detail ruangan + virtual tour |
+| `/booking/[roomId]` | Form booking |
+| `/booking/success/[id]` | Invoice + upload bukti bayar |
+| `/dashboard` | Dashboard user |
+| `/admin` | Dashboard admin |
+| `/admin/bookings` | Kelola booking + verifikasi |
+| `/admin/rooms` | Kelola ruangan |
+| `/admin/facilities` | Kelola fasilitas tambahan |
+| `/auth/login` | Login |
+| `/auth/register` | Registrasi |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Fitur
+
+- ✅ Katalog ruangan dengan foto & info lengkap
+- ✅ Virtual tour embed (iframe)
+- ✅ Booking dengan validasi double booking
+- ✅ Pilih fasilitas tambahan + kalkulasi harga otomatis
+- ✅ Upload bukti pembayaran (JPG/PNG/PDF, max 2MB)
+- ✅ Status booking: pending → verified/rejected
+- ✅ Dashboard user (riwayat booking)
+- ✅ Dashboard admin (approve/reject, export Excel)
+- ✅ Role-based access (admin/user)
+- ✅ Responsive mobile-friendly
