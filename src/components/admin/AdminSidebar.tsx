@@ -2,16 +2,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Building2, LayoutDashboard, CalendarDays, DoorOpen, Wrench, LogOut, ShieldCheck, Loader2 } from "lucide-react";
+import { Building2, LayoutDashboard, CalendarDays, DoorOpen, Wrench, LogOut, ShieldCheck, Loader2, FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/admin",            label: "Dashboard",    icon: LayoutDashboard, roles: ["admin", "superadmin"] },
-  { href: "/admin/bookings",   label: "Booking",      icon: CalendarDays,    roles: ["admin", "superadmin"] },
-  { href: "/admin/rooms",      label: "Ruangan",      icon: DoorOpen,        roles: ["admin", "superadmin"] },
-  { href: "/admin/facilities", label: "Fasilitas",    icon: Wrench,          roles: ["admin", "superadmin"] },
-  { href: "/admin/admins",     label: "Kelola Admin", icon: ShieldCheck,     roles: ["superadmin"] },
+  { href: "/admin",                  label: "Dashboard",    icon: LayoutDashboard, roles: ["admin", "superadmin"] },
+  { href: "/admin/bookings",         label: "Booking",      icon: CalendarDays,    roles: ["admin", "superadmin"] },
+  { href: "/admin/rooms",            label: "Ruangan",      icon: DoorOpen,        roles: ["admin", "superadmin"] },
+  { href: "/admin/facilities",       label: "Fasilitas",    icon: Wrench,          roles: ["admin", "superadmin"] },
+  { href: "/admin/invoice-settings", label: "Invoice",      icon: FileText,        roles: ["admin", "superadmin"] },
+  { href: "/admin/admins",           label: "Kelola Admin", icon: ShieldCheck,     roles: ["superadmin"] },
 ];
 
 export default function AdminSidebar({ role, name }: { role: string; name: string }) {

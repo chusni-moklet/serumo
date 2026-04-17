@@ -1,9 +1,10 @@
 "use client";
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
-import { Printer, Download, ArrowLeft, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Printer, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { loadInvoiceSettings, type InvoiceSettings } from "@/app/admin/invoice-settings/InvoiceSettingsClient";
 
 interface FacilityLine {
   name: string;
@@ -40,78 +41,91 @@ const statusConfig = {
 };
 
 export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }) {
-  const printRef = useRef<HTMLDivElement>(null);
+  const [cfg, setCfg] = useState<InvoiceSettings | null>(null);
 
-  const handlePrint = () => {
-    window.print();
-  };
+  useEffect(() => {
+    setCfg(loadInvoiceSettings());
+  }, []);
 
+  const handlePrint = () => window.print();
   const st = statusConfig[invoice.status];
+
+  const headerGradient = cfg
+    ? `linear-gradient(135deg, ${cfg.primaryColor} 0%, ${cfg.primaryColor}cc 40%, ${cfg.secondaryColor} 100%)`
+    : "linear-gradient(135deg, #E40521 0%, #B8001A 40%, #003087 100%)";
+
+  const totalGradient = cfg
+    ? `linear-gradient(135deg, ${cfg.primaryColor}, ${cfg.secondaryColor})`
+    : "linear-gradient(135deg, #E40521, #003087)";
 
   return (
     <>
-      {/* Action bar — hidden on print */}
-      <div className="print:hidden bg-gray-100 border-b border-gray-200 py-3 px-4">
+      {/* Action bar */}
+      <div className="print:hidden bg-white border-b border-gray-200 py-3 px-4 sticky top-0 z-10 shadow-sm">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-3">
           <Link href="/dashboard">
             <Button variant="ghost" size="sm" className="text-gray-600">
               <ArrowLeft className="w-4 h-4" /> Kembali
             </Button>
           </Link>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handlePrint}>
-              <Printer className="w-4 h-4" /> Cetak / Simpan PDF
+          <div className="flex items-center gap-2">
+            <Link href="/admin/invoice-settings" className="print:hidden">
+              <Button variant="outline" size="sm">⚙️ Edit Layout</Button>
+            </Link>
+            <Button size="sm" onClick={handlePrint}>
+              <Printer className="w-4 h-4" /> Cetak / PDF
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Invoice — this gets printed */}
+      {/* Invoice body */}
       <div className="bg-gray-100 min-h-screen py-8 print:bg-white print:p-0 print:min-h-0">
         <div
-          ref={printRef}
           className="max-w-3xl mx-auto bg-white shadow-lg print:shadow-none print:max-w-none"
           style={{ fontFamily: "'Segoe UI', Arial, sans-serif" }}
         >
           {/* Header */}
-          <div
-            className="p-8 print:p-10"
-            style={{ background: "linear-gradient(135deg, #E40521 0%, #B8001A 40%, #003087 100%)" }}
-          >
-            <div className="flex items-start justify-between">
+          <div className="p-8 print:p-10" style={{ background: headerGradient }}>
+            <div className="flex items-start justify-between flex-wrap gap-4">
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">S</span>
+                {cfg?.showLogo !== false && (
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                      <span className="text-white font-bold text-lg">
+                        {(cfg?.orgName ?? "S")[0]}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="text-white font-bold text-xl">{cfg?.orgName ?? "Serumo"}</div>
+                      <div className="text-white/60 text-xs">{cfg?.orgSubtitle ?? "SMK Telkom Malang"}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-white font-bold text-xl">Serumo</div>
-                    <div className="text-white/60 text-xs">SMK Telkom Malang</div>
-                  </div>
-                </div>
+                )}
                 <div className="text-white/70 text-xs mt-2 space-y-0.5">
-                  <div>Jl. Danau Ranau, Sawojajar, Kec. Kedungkandang</div>
-                  <div>Kota Malang, Jawa Timur 65138</div>
-                  <div>info@smktelkom-mlg.sch.id · 0812-2348-8999</div>
+                  <div>{cfg?.orgAddress ?? "Jl. Danau Ranau, Sawojajar, Malang"}</div>
+                  <div>{cfg?.orgEmail} · {cfg?.orgPhone}</div>
+                  {cfg?.orgWebsite && <div>{cfg.orgWebsite}</div>}
                 </div>
               </div>
               <div className="text-right">
-                <div className="text-white/50 text-xs uppercase tracking-widest mb-1">Invoice</div>
+                <div className="text-white/50 text-xs uppercase tracking-widest mb-1">
+                  {cfg?.invoiceTitle ?? "Invoice"}
+                </div>
                 <div className="text-white font-bold text-2xl">{invoice.invoiceNo}</div>
                 <div className="text-white/60 text-xs mt-1">Diterbitkan: {invoice.issuedAt}</div>
                 <div
                   className="mt-3 px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5"
                   style={{ background: "rgba(255,255,255,0.2)", color: "white" }}
                 >
-                  <span>{st.icon}</span>
-                  <span>{st.label}</span>
+                  {st.icon} {st.label}
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="p-8 print:p-10 space-y-8">
-            {/* Billing info */}
+          <div className="p-8 print:p-10 space-y-7">
+            {/* Billing & booking info */}
             <div className="grid grid-cols-2 gap-8">
               <div>
                 <div className="text-xs text-gray-400 uppercase tracking-widest mb-2 font-semibold">Ditagihkan Kepada</div>
@@ -121,48 +135,50 @@ export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }
               <div>
                 <div className="text-xs text-gray-400 uppercase tracking-widest mb-2 font-semibold">Detail Booking</div>
                 <div className="space-y-1 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">ID Booking</span>
-                    <span className="font-mono text-gray-700 text-xs">{invoice.bookingId.slice(0, 12).toUpperCase()}</span>
+                  <div className="flex justify-between gap-4">
+                    <span className="text-gray-500">ID</span>
+                    <span className="font-mono text-xs">{invoice.bookingId.slice(0, 12).toUpperCase()}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between gap-4">
                     <span className="text-gray-500">Tanggal</span>
-                    <span className="text-gray-700">{invoice.date}</span>
+                    <span>{invoice.date}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between gap-4">
                     <span className="text-gray-500">Waktu</span>
-                    <span className="text-gray-700">{invoice.startTime} – {invoice.endTime}</span>
+                    <span>{invoice.startTime} – {invoice.endTime}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between gap-4">
                     <span className="text-gray-500">Durasi</span>
-                    <span className="text-gray-700">{invoice.duration} jam</span>
+                    <span>{invoice.duration} jam</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Room info box */}
+            {/* Room info */}
             <div
               className="rounded-xl p-5 border-l-4"
-              style={{ background: "#fff7f7", borderLeftColor: "#E40521" }}
+              style={{ background: "#fff7f7", borderLeftColor: cfg?.primaryColor ?? "#E40521" }}
             >
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
                   <div className="text-xs text-gray-400 uppercase tracking-widest mb-1">Ruangan yang Disewa</div>
                   <div className="font-bold text-gray-900 text-lg">{invoice.room.name}</div>
                   <div className="flex gap-4 text-sm text-gray-500 mt-1">
-                    <span>👥 Kapasitas {invoice.room.capacity} orang</span>
+                    <span>👥 {invoice.room.capacity} orang</span>
                     {invoice.room.area > 0 && <span>📐 {invoice.room.area} m²</span>}
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-xs text-gray-400">Harga per jam</div>
-                  <div className="font-bold text-red-600 text-lg">{formatCurrency(invoice.pricePerHour)}</div>
+                  <div className="font-bold text-lg" style={{ color: cfg?.primaryColor ?? "#E40521" }}>
+                    {formatCurrency(invoice.pricePerHour)}
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Line items table */}
+            {/* Table */}
             <div>
               <table className="w-full text-sm">
                 <thead>
@@ -174,7 +190,6 @@ export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Room line */}
                   <tr className="border-b border-gray-100">
                     <td className="px-4 py-3.5">
                       <div className="font-medium text-gray-900">{invoice.room.name}</div>
@@ -182,10 +197,8 @@ export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }
                     </td>
                     <td className="px-4 py-3.5 text-right text-gray-600">{formatCurrency(invoice.pricePerHour)}/jam</td>
                     <td className="px-4 py-3.5 text-right text-gray-600">{invoice.duration}</td>
-                    <td className="px-4 py-3.5 text-right font-medium text-gray-900">{formatCurrency(invoice.roomSubtotal)}</td>
+                    <td className="px-4 py-3.5 text-right font-medium">{formatCurrency(invoice.roomSubtotal)}</td>
                   </tr>
-
-                  {/* Facility lines */}
                   {invoice.facilities.map((f, i) => (
                     <tr key={i} className="border-b border-gray-100">
                       <td className="px-4 py-3.5">
@@ -194,32 +207,26 @@ export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }
                       </td>
                       <td className="px-4 py-3.5 text-right text-gray-600">{formatCurrency(f.price)}/unit</td>
                       <td className="px-4 py-3.5 text-right text-gray-600">{f.quantity}</td>
-                      <td className="px-4 py-3.5 text-right font-medium text-gray-900">{formatCurrency(f.subtotal)}</td>
+                      <td className="px-4 py-3.5 text-right font-medium">{formatCurrency(f.subtotal)}</td>
                     </tr>
                   ))}
                 </tbody>
-
-                {/* Totals */}
                 <tfoot>
                   {invoice.facilityTotal > 0 && (
-                    <tr className="border-b border-gray-100">
-                      <td colSpan={3} className="px-4 py-3 text-right text-gray-500 text-xs">Subtotal Ruangan</td>
-                      <td className="px-4 py-3 text-right text-gray-700">{formatCurrency(invoice.roomSubtotal)}</td>
-                    </tr>
+                    <>
+                      <tr className="border-b border-gray-100">
+                        <td colSpan={3} className="px-4 py-2.5 text-right text-gray-400 text-xs">Subtotal Ruangan</td>
+                        <td className="px-4 py-2.5 text-right text-gray-600 text-sm">{formatCurrency(invoice.roomSubtotal)}</td>
+                      </tr>
+                      <tr className="border-b border-gray-100">
+                        <td colSpan={3} className="px-4 py-2.5 text-right text-gray-400 text-xs">Subtotal Fasilitas</td>
+                        <td className="px-4 py-2.5 text-right text-gray-600 text-sm">{formatCurrency(invoice.facilityTotal)}</td>
+                      </tr>
+                    </>
                   )}
-                  {invoice.facilityTotal > 0 && (
-                    <tr className="border-b border-gray-100">
-                      <td colSpan={3} className="px-4 py-3 text-right text-gray-500 text-xs">Subtotal Fasilitas</td>
-                      <td className="px-4 py-3 text-right text-gray-700">{formatCurrency(invoice.facilityTotal)}</td>
-                    </tr>
-                  )}
-                  <tr style={{ background: "linear-gradient(135deg, #E40521, #003087)" }}>
-                    <td colSpan={3} className="px-4 py-4 text-right font-bold text-white text-base rounded-bl-lg">
-                      TOTAL PEMBAYARAN
-                    </td>
-                    <td className="px-4 py-4 text-right font-bold text-white text-xl rounded-br-lg">
-                      {formatCurrency(invoice.totalPrice)}
-                    </td>
+                  <tr style={{ background: totalGradient }}>
+                    <td colSpan={3} className="px-4 py-4 text-right font-bold text-white text-base rounded-bl-lg">TOTAL PEMBAYARAN</td>
+                    <td className="px-4 py-4 text-right font-bold text-white text-xl rounded-br-lg">{formatCurrency(invoice.totalPrice)}</td>
                   </tr>
                 </tfoot>
               </table>
@@ -233,20 +240,14 @@ export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }
               </div>
             )}
 
-            {/* Payment status */}
-            <div
-              className="rounded-xl p-5 flex items-center gap-4"
-              style={{ background: st.bg }}
-            >
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0"
-                style={{ background: st.color + "22" }}
-              >
+            {/* Status */}
+            <div className="rounded-xl p-5 flex items-center gap-4" style={{ background: st.bg }}>
+              <div className="w-10 h-10 rounded-full flex items-center justify-center text-lg shrink-0" style={{ background: st.color + "22" }}>
                 {st.icon}
               </div>
               <div>
                 <div className="font-semibold" style={{ color: st.color }}>{st.label}</div>
-                <div className="text-sm mt-0.5" style={{ color: st.color + "aa" }}>
+                <div className="text-sm mt-0.5" style={{ color: st.color + "99" }}>
                   {invoice.status === "pending" && "Silakan transfer ke rekening berikut dan upload bukti pembayaran."}
                   {invoice.status === "verified" && "Pembayaran telah dikonfirmasi. Booking Anda aktif."}
                   {invoice.status === "rejected" && "Pembayaran ditolak. Hubungi admin untuk informasi lebih lanjut."}
@@ -254,58 +255,73 @@ export default function InvoicePrintClient({ invoice }: { invoice: InvoiceData }
               </div>
             </div>
 
-            {/* Payment info — shown if pending */}
-            {invoice.status === "pending" && (
+            {/* Payment info */}
+            {invoice.status === "pending" && cfg?.showPaymentInfo !== false && (
               <div className="border border-gray-200 rounded-xl p-5">
                 <div className="text-xs text-gray-400 uppercase tracking-widest mb-3 font-semibold">Informasi Pembayaran</div>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+                <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
                     <div className="text-gray-400 mb-0.5">Bank</div>
-                    <div className="font-semibold text-gray-900">Bank BRI / BNI / Mandiri</div>
+                    <div className="font-semibold">{cfg?.bankName ?? "Bank BRI / BNI / Mandiri"}</div>
                   </div>
                   <div>
                     <div className="text-gray-400 mb-0.5">No. Rekening</div>
-                    <div className="font-semibold text-gray-900">Hubungi Admin</div>
+                    <div className="font-semibold">{cfg?.bankAccount ?? "Hubungi Admin"}</div>
                   </div>
                   <div>
                     <div className="text-gray-400 mb-0.5">Atas Nama</div>
-                    <div className="font-semibold text-gray-900">SMK Telkom Malang</div>
+                    <div className="font-semibold">{cfg?.bankAccountName ?? "SMK Telkom Malang"}</div>
                   </div>
                   <div>
                     <div className="text-gray-400 mb-0.5">Jumlah Transfer</div>
-                    <div className="font-bold text-red-600 text-base">{formatCurrency(invoice.totalPrice)}</div>
+                    <div className="font-bold text-base" style={{ color: cfg?.primaryColor ?? "#E40521" }}>
+                      {formatCurrency(invoice.totalPrice)}
+                    </div>
                   </div>
                 </div>
+                {cfg?.paymentNote && <p className="text-xs text-gray-500 mt-3 italic">{cfg.paymentNote}</p>}
+              </div>
+            )}
+
+            {/* Watermark status */}
+            {cfg?.showWatermark && (
+              <div
+                className="text-center py-3 rounded-xl border-2 font-bold text-2xl tracking-widest opacity-20 rotate-[-2deg]"
+                style={{
+                  borderColor: invoice.status === "verified" ? "#065f46" : invoice.status === "rejected" ? "#991b1b" : "#b45309",
+                  color: invoice.status === "verified" ? "#065f46" : invoice.status === "rejected" ? "#991b1b" : "#b45309",
+                }}
+              >
+                {invoice.status === "verified" ? "✓ LUNAS" : invoice.status === "rejected" ? "✗ DITOLAK" : "MENUNGGU PEMBAYARAN"}
               </div>
             )}
 
             {/* Footer */}
-            <div className="border-t border-gray-100 pt-6 flex items-end justify-between text-xs text-gray-400">
+            <div className="border-t border-gray-100 pt-5 flex items-end justify-between gap-4 text-xs text-gray-400">
               <div>
-                <div className="font-semibold text-gray-600 mb-1">Serumo — SMK Telkom Malang</div>
-                <div>Dokumen ini diterbitkan secara otomatis oleh sistem Serumo.</div>
-                <div>Untuk pertanyaan, hubungi: info@smktelkom-mlg.sch.id</div>
+                <div className="font-semibold text-gray-600 mb-1">
+                  {cfg?.orgName ?? "Serumo"} — {cfg?.orgSubtitle ?? "SMK Telkom Malang"}
+                </div>
+                <div>{cfg?.invoiceFooterNote ?? "Dokumen ini diterbitkan secara otomatis oleh sistem Serumo."}</div>
+                {(cfg?.orgEmail || cfg?.orgPhone) && (
+                  <div className="mt-0.5">{cfg?.orgEmail} · {cfg?.orgPhone}</div>
+                )}
               </div>
-              <div className="text-right">
+              <div className="text-right shrink-0">
                 <div>{invoice.invoiceNo}</div>
-                <div className="mt-1">Dicetak: {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}</div>
+                <div className="mt-0.5">
+                  Dicetak: {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" })}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Print styles */}
       <style jsx global>{`
         @media print {
-          @page {
-            size: A4;
-            margin: 0;
-          }
-          body {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-          }
+          @page { size: A4; margin: 0; }
+          body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
           .print\\:hidden { display: none !important; }
           nav, footer { display: none !important; }
           body > div > main { padding-bottom: 0 !important; }
