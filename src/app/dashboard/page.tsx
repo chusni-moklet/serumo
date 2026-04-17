@@ -108,13 +108,20 @@ export default async function DashboardPage() {
                         </div>
                         <div className="mt-1.5 font-bold text-red-600 text-sm">{formatCurrency(booking.total_price)}</div>
                       </div>
-                      {!hasPayment && booking.status === "pending" && (
-                        <Link href={`/booking/success/${booking.id}`} className="shrink-0">
-                          <Button size="sm" variant="outline" className="text-xs h-8">
-                            <Upload className="w-3 h-3" /> Bayar
+                      <div className="flex flex-col gap-2 items-end shrink-0">
+                        {!hasPayment && booking.status === "pending" && (
+                          <Link href={`/booking/success/${booking.id}`}>
+                            <Button size="sm" variant="outline" className="text-xs h-8">
+                              <Upload className="w-3 h-3" /> Bayar
+                            </Button>
+                          </Link>
+                        )}
+                        <Link href={`/invoice/${booking.id}`}>
+                          <Button size="sm" variant="ghost" className="text-xs h-7 text-gray-400 hover:text-red-600">
+                            Invoice
                           </Button>
                         </Link>
-                      )}
+                      </div>
                     </div>
                   </div>
                 );

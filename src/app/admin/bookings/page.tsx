@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import BookingActions from "@/components/admin/BookingActions";
 import ExportButton from "@/components/admin/ExportButton";
+import Link from "next/link";
+import { FileText } from "lucide-react";
 
 const statusConfig = {
   pending:  { label: "Menunggu",      variant: "warning" as const },
@@ -85,7 +87,12 @@ export default async function AdminBookingsPage({
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-red-600 text-sm">{formatCurrency(booking.total_price)}</span>
-                    <BookingActions booking={booking} />
+                    <div className="flex items-center gap-2">
+                      <Link href={`/invoice/${booking.id}`} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                        <FileText className="w-3 h-3" /> Invoice
+                      </Link>
+                      <BookingActions booking={booking} />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -108,6 +115,7 @@ export default async function AdminBookingsPage({
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Total</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
                   <th className="text-left px-4 py-3 font-medium text-gray-600">Aksi</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">Invoice</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -128,6 +136,11 @@ export default async function AdminBookingsPage({
                         <td className="px-4 py-3 font-semibold text-red-600 text-sm">{formatCurrency(booking.total_price)}</td>
                         <td className="px-4 py-3"><Badge variant={s.variant}>{s.label}</Badge></td>
                         <td className="px-4 py-3"><BookingActions booking={booking} /></td>
+                        <td className="px-4 py-3">
+                          <Link href={`/invoice/${booking.id}`} className="text-xs text-blue-600 hover:underline flex items-center gap-1">
+                            <FileText className="w-3 h-3" /> Invoice
+                          </Link>
+                        </td>
                       </tr>
                     );
                   })

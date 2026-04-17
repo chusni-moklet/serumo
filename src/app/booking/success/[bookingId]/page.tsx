@@ -68,9 +68,16 @@ export default async function BookingSuccessPage({ params }: { params: Promise<{
       {/* Payment Upload */}
       <PaymentUpload bookingId={booking.id} existingPayment={booking.payment} />
 
-      <div className="mt-6 text-center">
+      <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <Link href={`/invoice/${booking.id}`}>
+          <Button variant="outline" className="w-full sm:w-auto">
+            <ArrowRight className="w-4 h-4" /> Lihat Invoice
+          </Button>
+        </Link>
         <Link href="/dashboard">
-          <Button variant="outline">Lihat Riwayat Booking <ArrowRight className="w-4 h-4" /></Button>
+          <Button variant="ghost" className="w-full sm:w-auto text-gray-500">
+            Riwayat Booking
+          </Button>
         </Link>
       </div>
     </div>
