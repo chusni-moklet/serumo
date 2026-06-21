@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (profile?.role !== "admin" && profile?.role !== "superadmin") redirect("/");
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden bg-gray-50">
       {/* Sidebar — desktop only */}
       <div className="hidden md:flex">
         <AdminSidebar role={profile?.role ?? "admin"} name={profile?.name ?? ""} />

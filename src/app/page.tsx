@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowRight, Users, Building2, Calendar, Shield, CheckCircle, Star } from "lucide-react";
 import type { Room } from "@/types";
-
+import HeroSlider from "@/components/home/HeroSlider";
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: rooms } = await supabase.from("rooms").select("*").limit(6);
@@ -15,60 +15,28 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Hero — Telkom gradient */}
-      <section className="relative overflow-hidden" style={{ background: "linear-gradient(135deg, #E40521 0%, #B8001A 35%, #001F5C 70%, #003087 100%)" }}>
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #ffffff 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
-        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full opacity-10" style={{ background: "radial-gradient(circle, #ffffff 0%, transparent 70%)", transform: "translate(-30%, 30%)" }} />
+      {/* Hero Slider */}
+      <HeroSlider />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-28">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 rounded-full px-3 py-1.5 mb-5">
-              <span className="text-xs text-white font-medium">🏫 SMK Telkom Malang</span>
+      {/* Stats bar */}
+      <div className="bg-white border-b border-gray-100 shadow-sm relative z-20">
+        <div className="max-w-7xl mx-auto px-4 py-6">
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div>
+              <div className="text-2xl md:text-4xl font-bold text-gray-900">{rooms?.length ?? 0}+</div>
+              <div className="text-gray-500 text-xs md:text-sm mt-1">Ruangan</div>
             </div>
-            <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-white">
-              Sewa Ruangan<br />
-              <span className="text-yellow-300">Moklet</span> Mudah &<br />
-              Transparan
-            </h1>
-            <p className="text-base text-white/80 mb-7 max-w-md leading-relaxed">
-              Booking ruangan sekolah secara online. Lihat virtual tour, pilih fasilitas, dan konfirmasi pembayaran — semua dalam satu platform.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/rooms">
-                <Button size="lg" className="w-full sm:w-auto bg-white text-red-700 hover:bg-red-50 shadow-xl font-semibold">
-                  Lihat Ruangan <ArrowRight className="w-4 h-4" />
-                </Button>
-              </Link>
-              <Link href="/auth/register">
-                <Button size="lg" className="w-full sm:w-auto bg-white/10 border border-white/30 text-white hover:bg-white/20 backdrop-blur-sm">
-                  Daftar Sekarang
-                </Button>
-              </Link>
+            <div>
+              <div className="text-2xl md:text-4xl font-bold text-gray-900">{totalBookings ?? 0}+</div>
+              <div className="text-gray-500 text-xs md:text-sm mt-1">Booking</div>
+            </div>
+            <div>
+              <div className="text-2xl md:text-4xl font-bold text-gray-900">100%</div>
+              <div className="text-gray-500 text-xs md:text-sm mt-1">Terverifikasi</div>
             </div>
           </div>
         </div>
-
-        {/* Stats bar */}
-        <div className="bg-black/20 backdrop-blur-sm border-t border-white/10">
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-2xl md:text-3xl font-bold text-white">{rooms?.length ?? 0}+</div>
-                <div className="text-white/60 text-xs md:text-sm">Ruangan</div>
-              </div>
-              <div>
-                <div className="text-2xl md:text-3xl font-bold text-white">{totalBookings ?? 0}+</div>
-                <div className="text-white/60 text-xs md:text-sm">Booking</div>
-              </div>
-              <div>
-                <div className="text-2xl md:text-3xl font-bold text-white">100%</div>
-                <div className="text-white/60 text-xs md:text-sm">Terverifikasi</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
 
       {/* Features */}
       <section className="py-12 md:py-16 bg-white">

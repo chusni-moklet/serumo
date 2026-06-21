@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Building2, LayoutDashboard, CalendarDays, DoorOpen, Wrench, LogOut, ShieldCheck, Loader2, FileText } from "lucide-react";
+import { Building2, LayoutDashboard, CalendarDays, DoorOpen, Wrench, LogOut, ShieldCheck, Loader2, FileText, Image as ImageIcon, Wallet } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
@@ -12,6 +12,8 @@ const navItems = [
   { href: "/admin/rooms",            label: "Ruangan",      icon: DoorOpen,        roles: ["admin", "superadmin"] },
   { href: "/admin/facilities",       label: "Fasilitas",    icon: Wrench,          roles: ["admin", "superadmin"] },
   { href: "/admin/invoice-settings", label: "Invoice",      icon: FileText,        roles: ["admin", "superadmin"] },
+  { href: "/admin/slider",           label: "Foto Slider",  icon: ImageIcon,       roles: ["admin", "superadmin"] },
+  { href: "/admin/finance",          label: "Keuangan",     icon: Wallet,          roles: ["superadmin"] },
   { href: "/admin/admins",           label: "Kelola Admin", icon: ShieldCheck,     roles: ["superadmin"] },
 ];
 
@@ -30,9 +32,9 @@ export default function AdminSidebar({ role, name }: { role: string; name: strin
   const visibleItems = navItems.filter((item) => item.roles.includes(role));
 
   return (
-    <aside className="w-56 flex flex-col min-h-screen sticky top-0 shrink-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #001F5C 100%)" }}>
+    <aside className="w-56 flex flex-col h-full sticky top-0 shrink-0" style={{ background: "linear-gradient(180deg, #0f172a 0%, #001F5C 100%)" }}>
       {/* Logo */}
-      <div className="p-4 border-b border-white/10">
+      <div className="p-4 border-b border-white/10 shrink-0">
         <Link href="/" className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center shadow-lg" style={{ background: "linear-gradient(135deg, #E40521, #003087)" }}>
             <Building2 className="w-4 h-4 text-white" />
@@ -48,7 +50,7 @@ export default function AdminSidebar({ role, name }: { role: string; name: strin
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-0.5">
+      <nav className="flex-1 overflow-y-auto p-3 space-y-0.5 custom-scrollbar">
         {visibleItems.map((item) => {
           const active = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
           return (

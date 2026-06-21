@@ -97,47 +97,46 @@ export default function InvoiceSettingsClient() {
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl">
+    <div className="p-4 md:p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
+      <div className="flex items-center justify-between mb-5">
         <div>
           <h1 className="text-xl md:text-2xl font-bold text-gray-900">Pengaturan Invoice</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Kustomisasi tampilan dan isi invoice yang dikirim ke penyewa</p>
+          <p className="text-gray-500 text-xs mt-0.5">Kustomisasi tampilan dan isi invoice yang dikirim ke penyewa</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleReset}>
-            <RotateCcw className="w-4 h-4" /> Reset
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" onClick={handleReset} className="text-gray-600">
+            <RotateCcw className="w-4 h-4 mr-2" /> Reset Default
           </Button>
           <a href="/invoice/preview" target="_blank" rel="noopener noreferrer">
-            <Button variant="outline" size="sm">
-              <Eye className="w-4 h-4" /> Preview
+            <Button variant="outline" size="sm" className="text-blue-600 border-blue-200 hover:bg-blue-50">
+              <Eye className="w-4 h-4 mr-2" /> Preview PDF
             </Button>
           </a>
-          <Button size="sm" onClick={handleSave}>
-            {saved ? <><CheckCircle className="w-4 h-4" /> Tersimpan!</> : <><Save className="w-4 h-4" /> Simpan</>}
-          </Button>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
+      <div className="flex flex-col md:flex-row gap-8">
         {/* Tab list */}
-        <div className="md:w-44 shrink-0">
-          <div className="flex md:flex-col gap-1 overflow-x-auto md:overflow-visible">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${
-                  activeTab === tab.id
-                    ? "text-white shadow-sm"
-                    : "text-gray-600 hover:bg-gray-100"
-                }`}
-                style={activeTab === tab.id ? { background: "linear-gradient(135deg, #E40521, #003087)" } : {}}
-              >
-                <tab.icon className="w-4 h-4 shrink-0" />
-                {tab.label}
-              </button>
-            ))}
+        <div className="md:w-56 shrink-0">
+          <div className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0">
+            {tabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all whitespace-nowrap ${
+                    isActive
+                      ? "bg-red-50 text-red-700 shadow-sm border border-red-100"
+                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900 border border-transparent"
+                  }`}
+                >
+                  <tab.icon className={`w-5 h-5 shrink-0 ${isActive ? "text-red-600" : "text-gray-400"}`} />
+                  {tab.label}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -146,9 +145,9 @@ export default function InvoiceSettingsClient() {
 
           {/* IDENTITY */}
           {activeTab === "identity" && (
-            <Card>
-              <CardContent className="p-5 space-y-4">
-                <h3 className="font-semibold text-gray-900 mb-4">Informasi Organisasi</h3>
+            <Card className="border-gray-200 shadow-sm overflow-hidden">
+              <CardContent className="p-6 md:p-8 space-y-6">
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Informasi Organisasi</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label>Nama Organisasi</Label>
@@ -183,9 +182,9 @@ export default function InvoiceSettingsClient() {
 
           {/* COLOR & TITLE */}
           {activeTab === "color" && (
-            <Card>
-              <CardContent className="p-5 space-y-5">
-                <h3 className="font-semibold text-gray-900">Warna & Judul Invoice</h3>
+            <Card className="border-gray-200 shadow-sm overflow-hidden">
+              <CardContent className="p-6 md:p-8 space-y-8">
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Warna & Judul Invoice</h3>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -262,10 +261,12 @@ export default function InvoiceSettingsClient() {
 
           {/* PAYMENT */}
           {activeTab === "payment" && (
-            <Card>
-              <CardContent className="p-5 space-y-4">
-                <h3 className="font-semibold text-gray-900">Informasi Rekening Pembayaran</h3>
-                <p className="text-xs text-gray-400">Informasi ini ditampilkan di invoice saat status masih "Menunggu Pembayaran"</p>
+            <Card className="border-gray-200 shadow-sm overflow-hidden">
+              <CardContent className="p-6 md:p-8 space-y-6">
+                <div className="border-b border-gray-100 pb-3">
+                  <h3 className="text-lg font-bold text-gray-900">Informasi Rekening Pembayaran</h3>
+                  <p className="text-sm text-gray-500 mt-1">Informasi ini ditampilkan di invoice saat status masih "Menunggu Pembayaran"</p>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label>Nama Bank</Label>
@@ -301,9 +302,9 @@ export default function InvoiceSettingsClient() {
 
           {/* FOOTER */}
           {activeTab === "footer" && (
-            <Card>
-              <CardContent className="p-5 space-y-4">
-                <h3 className="font-semibold text-gray-900">Teks Footer Invoice</h3>
+            <Card className="border-gray-200 shadow-sm overflow-hidden">
+              <CardContent className="p-6 md:p-8 space-y-6">
+                <h3 className="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Teks Footer Invoice</h3>
                 <div>
                   <Label>Catatan Footer</Label>
                   <Textarea
@@ -331,11 +332,11 @@ export default function InvoiceSettingsClient() {
           )}
 
           {/* Save reminder */}
-          <div className="flex justify-end gap-2 mt-4">
-            <Button onClick={handleSave} className="gap-2">
+          <div className="flex justify-end mt-8">
+            <Button onClick={handleSave} size="lg" className="gap-2 px-8 shadow-lg w-full sm:w-auto">
               {saved
-                ? <><CheckCircle className="w-4 h-4" /> Pengaturan Tersimpan!</>
-                : <><Save className="w-4 h-4" /> Simpan Pengaturan</>
+                ? <><CheckCircle className="w-5 h-5" /> Pengaturan Tersimpan!</>
+                : <><Save className="w-5 h-5" /> Simpan Pengaturan</>
               }
             </Button>
           </div>

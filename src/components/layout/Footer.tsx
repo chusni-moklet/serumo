@@ -1,7 +1,13 @@
+"use client";
+
 import { Building2, Mail, Phone, MapPin } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <footer className="mt-auto" style={{ background: "linear-gradient(135deg, #0f172a 0%, #001F5C 60%, #1a0a0a 100%)" }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

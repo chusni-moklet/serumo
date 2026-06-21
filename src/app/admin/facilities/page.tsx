@@ -10,10 +10,12 @@ export default async function AdminFacilitiesPage() {
   const { data: facilities } = await supabase.from("facilities").select("*").order("name");
 
   return (
-    <div className="p-8 max-w-2xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Manajemen Fasilitas</h1>
-        <p className="text-gray-500 text-sm mt-1">Kelola fasilitas tambahan yang tersedia</p>
+    <div className="p-4 md:p-8">
+      <div className="flex items-center justify-between mb-5">
+        <div>
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Fasilitas</h1>
+          <p className="text-gray-500 text-xs mt-0.5">Kelola fasilitas tambahan yang tersedia</p>
+        </div>
       </div>
       <FacilityManager facilities={facilities ?? []} />
     </div>
