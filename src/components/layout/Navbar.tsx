@@ -37,10 +37,11 @@ export default function Navbar() {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setOpen(false);
-    window.location.href = "/";
+    supabase.auth.signOut().finally(() => {
+      setUser(null);
+      setOpen(false);
+      window.location.href = "/";
+    });
   };
 
   const dashboardHref = (user?.role === "admin" || user?.role === "superadmin") ? "/admin" : "/dashboard";

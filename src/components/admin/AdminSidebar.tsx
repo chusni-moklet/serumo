@@ -25,8 +25,9 @@ export default function AdminSidebar({ role, name }: { role: string; name: strin
   const handleLogout = async () => {
     if (loggingOut) return;
     setLoggingOut(true);
-    try { await supabase.auth.signOut(); } catch {}
-    window.location.href = "/";
+    supabase.auth.signOut().finally(() => {
+      window.location.href = "/";
+    });
   };
 
   const visibleItems = navItems.filter((item) => item.roles.includes(role));

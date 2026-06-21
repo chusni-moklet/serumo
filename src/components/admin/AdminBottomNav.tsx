@@ -24,12 +24,9 @@ export default function AdminBottomNav({ role }: { role: string }) {
   const handleLogout = async () => {
     if (loggingOut) return;
     setLoggingOut(true);
-    try {
-      await supabase.auth.signOut();
+    supabase.auth.signOut().finally(() => {
       window.location.href = "/";
-    } catch {
-      window.location.href = "/";
-    }
+    });
   };
 
   return (
