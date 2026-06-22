@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 
 export const metadata: Metadata = {
   title: "Serumo — Sewa Ruangan Moklet",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <main className="flex-1 pb-16 md:pb-0">{children}</main>
         <Footer />
+        <FloatingWhatsApp />
       </body>
     </html>
   );

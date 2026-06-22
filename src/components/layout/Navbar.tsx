@@ -95,8 +95,7 @@ export default function Navbar() {
                 </>
               ) : !loading ? (
                 <>
-                  <Link href="/auth/login"><Button variant="outline" size="sm">Masuk</Button></Link>
-                  <Link href="/auth/register"><Button size="sm">Daftar</Button></Link>
+                  <Link href="/auth/login"><Button size="sm">Masuk / Daftar</Button></Link>
                 </>
               ) : null}
             </div>
@@ -146,9 +145,8 @@ export default function Navbar() {
                   </div>
                 </>
               ) : !loading ? (
-                <div className="flex gap-2 px-3 pt-2 pb-1 border-t border-gray-100 mt-1">
-                  <Link href="/auth/login" className="flex-1"><Button variant="outline" size="sm" className="w-full">Masuk</Button></Link>
-                  <Link href="/auth/register" className="flex-1"><Button size="sm" className="w-full">Daftar</Button></Link>
+                <div className="px-3 pt-2 pb-1 border-t border-gray-100 mt-1">
+                  <Link href="/auth/login"><Button size="sm" className="w-full">Masuk / Daftar</Button></Link>
                 </div>
               ) : null}
             </div>
@@ -184,13 +182,9 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <Link href="/auth/login" className={`flex flex-col items-center gap-0.5 px-3 py-2 ${pathname === "/auth/login" ? "text-red-600" : "text-gray-400"}`}>
+              <Link href="/auth/login" className={`flex flex-col items-center gap-0.5 px-3 py-2 ${pathname === "/auth/login" || pathname === "/auth/register" ? "text-red-600" : "text-gray-400"}`}>
                 <User className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Masuk</span>
-              </Link>
-              <Link href="/auth/register" className={`flex flex-col items-center gap-0.5 px-3 py-2 ${pathname === "/auth/register" ? "text-red-600" : "text-gray-400"}`}>
-                <User className="w-5 h-5" />
-                <span className="text-[10px] font-medium">Daftar</span>
+                <span className="text-[10px] font-medium">Masuk / Daftar</span>
               </Link>
             </>
           )}

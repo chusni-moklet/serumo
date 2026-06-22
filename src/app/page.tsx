@@ -8,6 +8,8 @@ import { formatCurrency } from "@/lib/utils";
 import { ArrowRight, Users, Building2, Calendar, Shield, CheckCircle, Star } from "lucide-react";
 import type { Room } from "@/types";
 import HeroSlider from "@/components/home/HeroSlider";
+import PublicSchedule from "@/components/home/PublicSchedule";
+import RoomGallery from "@/components/home/RoomGallery";
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: rooms } = await supabase.from("rooms").select("*").limit(6);
@@ -38,6 +40,19 @@ export default async function HomePage() {
         </div>
       </div>
 
+      {/* Public Schedule Section */}
+      <section className="py-12 md:py-16 bg-gray-50 border-t border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Jadwal Penggunaan Ruangan</h2>
+            <p className="text-gray-500 text-sm">Lihat jadwal kegiatan terdekat di ruangan SMK Telkom Malang</p>
+          </div>
+          <div className="max-w-4xl mx-auto">
+            <PublicSchedule />
+          </div>
+        </div>
+      </section>
+
       {/* Features */}
       <section className="py-12 md:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -65,7 +80,7 @@ export default async function HomePage() {
 
       {/* Room Catalog Preview */}
       {rooms && rooms.length > 0 && (
-        <section className="py-12 md:py-16 bg-gray-50">
+        <section className="py-12 md:py-16 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between mb-8">
               <div>
@@ -84,6 +99,17 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Room Gallery Section */}
+      <section className="py-12 md:py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Galeri Ruangan</h2>
+            <p className="text-gray-500 text-sm">Fasilitas dan kondisi ruangan terbaik untuk kegiatan Anda</p>
+          </div>
+          <RoomGallery />
+        </div>
+      </section>
 
       {/* CTA — Telkom gradient */}
       <section className="py-14 md:py-20 relative overflow-hidden" style={{ background: "linear-gradient(135deg, #003087 0%, #0047C8 50%, #E40521 100%)" }}>
