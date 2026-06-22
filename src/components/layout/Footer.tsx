@@ -57,7 +57,7 @@ export default function Footer() {
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 rounded-full bg-red-500" />
             <div className="w-2 h-2 rounded-full bg-blue-600" />
-            <span className="text-xs text-white/20 ml-1">Telkom Indonesia Group</span>
+            <span className="text-xs text-white/20 ml-1">Yayasan Pendidikan Telkom</span>
           </div>
         </div>
       </div>
