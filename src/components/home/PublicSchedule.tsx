@@ -66,28 +66,31 @@ export default async function PublicSchedule() {
               )}
             </div>
             <div className="divide-y divide-gray-50">
-              {dayBookings.map((booking) => (
-                <div key={booking.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors">
-                  <div className="flex items-start gap-4">
-                    <div className="bg-blue-50 text-blue-700 font-medium px-3 py-2 rounded-lg text-sm flex items-center gap-1.5 whitespace-nowrap">
-                      <Clock className="w-4 h-4 opacity-70" />
-                      {booking.start_time.slice(0, 5)} - {booking.end_time.slice(0, 5)}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 mb-1">{booking.room?.name || "Ruangan"}</h4>
-                      <div className="flex items-center text-sm text-gray-500 gap-1">
-                        <MapPin className="w-3.5 h-3.5" />
-                        <span>Kapasitas {booking.room?.capacity || 0} Orang</span>
+              {dayBookings.map((booking) => {
+                const roomData = Array.isArray(booking.room) ? booking.room[0] : booking.room;
+                return (
+                  <div key={booking.id} className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-colors">
+                    <div className="flex items-start gap-4">
+                      <div className="bg-blue-50 text-blue-700 font-medium px-3 py-2 rounded-lg text-sm flex items-center gap-1.5 whitespace-nowrap">
+                        <Clock className="w-4 h-4 opacity-70" />
+                        {booking.start_time.slice(0, 5)} - {booking.end_time.slice(0, 5)}
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">{roomData?.name || "Ruangan"}</h4>
+                        <div className="flex items-center text-sm text-gray-500 gap-1">
+                          <MapPin className="w-3.5 h-3.5" />
+                          <span>Kapasitas {roomData?.capacity || 0} Orang</span>
+                        </div>
                       </div>
                     </div>
+                    <div>
+                      <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">
+                        Terjadwal
+                      </Badge>
+                    </div>
                   </div>
-                  <div>
-                    <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0">
-                      Terjadwal
-                    </Badge>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         );
