@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, AlertCircle, Plus, X, Upload, Image as ImageIcon } from "lucide-react";
+import { Loader2, AlertCircle, CheckCircle2, Plus, X, Upload, Image as ImageIcon } from "lucide-react";
 import type { Room } from "@/types";
 
 export default function RoomForm({ room }: { room?: Room }) {
@@ -29,7 +29,9 @@ export default function RoomForm({ room }: { room?: Room }) {
   const [roomFacilities, setRoomFacilities] = useState<string[]>(room?.room_facilities ?? []);
   const [facilityInput, setFacilityInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [uploadingImage, setUploadingImage] = useState<string | null>(null);
 
   const set = (key: string, val: string) => setForm((p) => ({ ...p, [key]: val }));
@@ -91,6 +93,7 @@ export default function RoomForm({ room }: { room?: Room }) {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
       const payload = {
@@ -113,8 +116,13 @@ export default function RoomForm({ room }: { room?: Room }) {
         if (err) throw new Error(err.message);
       }
 
-      router.push("/admin/rooms");
-      router.refresh();
+      setSuccess("Berhasil menyimpan ruangan! Mengalihkan...");
+      setLoading(false);
+
+      startTransition(() => {
+        router.push("/admin/rooms");
+        router.refresh();
+      });
 
     } catch (err: any) {
       console.error("Save room error:", err);
@@ -128,6 +136,12 @@ export default function RoomForm({ room }: { room?: Room }) {
       {error && (
         <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 rounded-lg px-4 py-3 text-sm">
           <AlertCircle className="w-4 h-4" /> {error}
+        </div>
+      )}
+      
+      {success && (
+        <div className="flex items-center gap-2 bg-green-50 border border-green-200 text-green-700 rounded-lg px-4 py-3 text-sm">
+          <CheckCircle2 className="w-4 h-4" /> {success}
         </div>
       )}
 
@@ -291,8 +305,8 @@ export default function RoomForm({ room }: { room?: Room }) {
       </Card>
 
       <div className="flex gap-3">
-        <Button type="submit" disabled={loading || !!uploadingImage} className="flex-1">
-          {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...</> : isEdit ? "Simpan Perubahan" : "Tambah Ruangan"}
+        <Button type="submit" disabled={loading || isPending || !!uploadingImage} className="flex-1">
+          {loading || isPending ? <><Loader2 className="w-4 h-4 animate-spin" /> Menyimpan...</> : isEdit ? "Simpan Perubahan" : "Tambah Ruangan"}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>Batal</Button>
       </div>
