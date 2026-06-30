@@ -175,7 +175,7 @@ export default function Navbar() {
                 <LayoutDashboard className="w-5 h-5" />
                 <span className="text-[10px] font-medium">Dashboard</span>
               </Link>
-              <button onClick={handleLogout} className="flex flex-col items-center gap-0.5 px-3 py-2 text-gray-400">
+              <button type="button" onClick={handleLogout} className="flex flex-col items-center gap-0.5 px-3 py-2 text-gray-400">
                 <LogOut className="w-5 h-5" />
                 <span className="text-[10px] font-medium">Keluar</span>
               </button>
